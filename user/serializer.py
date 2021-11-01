@@ -68,3 +68,27 @@ class GuestUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'device_id', 'device_type', 'provider_type',)
+        
+class SocialUserSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User
+        fields = ('id', 'first_name','last_name','email', 'provider_type','provider_user_id', 'device_id', 'device_type')
+        extra_kwargs = {
+            "email": {
+                'required': True,
+                'allow_blank': False,
+                'validators': [
+                    EmailValidator
+                ]
+            },
+            "provider_type": {
+                'required': True,
+                'allow_blank': False,
+            },
+            "provider_user_id": {
+                'required': True,
+                'allow_blank': False,
+            },
+            "password": {'write_only': True},
+        }

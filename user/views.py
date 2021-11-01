@@ -1,12 +1,14 @@
-from rest_framework import generics
+from django.contrib.auth.hashers import make_password
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.auth.hashers import make_password
+from django.db.models import Q
+
 from .models import User
 from .serializer import *
-from rest_framework import status
+
 
 def user_access_token(user, context, is_created=False):
     refresh = RefreshToken.for_user(user)
@@ -70,6 +72,24 @@ class GuestUserView(generics.GenericAPIView):
         get_user = User.objects.filter(
             device_id=request.data['device_id'], provider_type='guest')
         if get_user.exists():
+            return user_access_token(get_user.first(), self.get_serializer_context(), is_created=False)
+
+        user = serializer.save()
+        return user_access_token(user, self.get_serializer_context(), is_created=True)
+
+class SocialUserView(generics.GenericAPIView):
+    serializer_class = SocialUserSerializer
+
+    def post(self, request, *args,  **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'error': serializer.errors}, status=400)
+
+        get_user = User.objects.filter(
+            Q(email__iexact=request.data['email']) | (Q(email__isnull=True) & ~Q(provider_type='guest') & Q(device_id=request.data['device_id'])))
+
+        if get_user.exists():
+            get_user.update(**serializer.data)
             return user_access_token(get_user.first(), self.get_serializer_context(), is_created=False)
 
         user = serializer.save()

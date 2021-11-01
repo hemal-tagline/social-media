@@ -43,8 +43,23 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','first_name','last_name','email','password']
 
-    # def update(self, instance, validated_data):
-    #     if 'password' in validated_data:
-    #         validated_data['password'] = make_password(
-    #             validated_data['password'])
-    #     return super(UserSerializer, self).update(instance, validated_data)
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            validated_data['password'] = make_password(validated_data['password'])
+        return super(UserSerializer, self).update(instance, validated_data)
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    default_error_messages = {
+        'no_active_account': {'error': {'detail': ['No active account found with the given credentials.']}}
+    }
+
+    def validate(self, user_data):
+        user_response = super(
+            CustomTokenObtainPairSerializer, self).validate(user_data)
+
+        # Access token with to include user detail.
+        user_response.pop('refresh')
+        user_response.update({
+            "user": UserSerializer(self.user).data
+        })
+        return user_response

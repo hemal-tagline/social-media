@@ -1,19 +1,11 @@
-from django.conf import settings
-from django.contrib.auth.hashers import make_password
-from django.core.mail import send_mail
-from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.hashers import make_password
-from django.core.validators import EmailValidator
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
-from .serializer import RegisterUserSerializer , UserSerializer
-from rest_framework.views import APIView
+from .serializer import *
 from rest_framework import status
 
 def user_access_token(user, context, is_created=False):
@@ -27,17 +19,42 @@ def user_access_token(user, context, is_created=False):
 
     return Response(response)
 
-
-# Create your views here.
 class RegisterUserView(generics.CreateAPIView):
     def post(self, request, format=None):
         serializer = RegisterUserSerializer(data=request.data)
 
         if User.objects.filter(email__iexact=request.data['email']).exists():
-            return Response({'error': {"email": ["Your email already register. please login with password."]}}, status=400)
+            return Response({'error': {"email": ["Your email already register. please login with password."]}}, status=status.HTTP_400_BAD_REQUEST)
         
         if serializer.is_valid():
             user = serializer.save()
             return user_access_token(user, self.get_serializer_context(), is_created=True)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class UserRetrieveUpdateDestroyview(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+
+    def get(self, request, format=None):
+        user = self.request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    def put(self, request, format=None):
+        user = self.request.user
+        serializer = UserSerializer(user, data=request.data)
+        if not serializer.is_valid():
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, format=None):
+        user_id = self.request.user.id
+        User.objects.filter(id=user_id).delete()
+        return Response({"message": [f"User {user_id} deleted successfully..!!"]}, status=status.HTTP_204_NO_CONTENT)
+
+class CutomObtainPairView(TokenObtainPairView):
+    """ Create API view for serializer class 'CustomTokenObtainPairSerializer' """
+    serializer_class = CustomTokenObtainPairSerializer

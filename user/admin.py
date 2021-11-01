@@ -5,10 +5,11 @@ from .models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['id','first_name','last_name','email','is_superuser' ]
-    fields = [ 'first_name','last_name','email', 'password', 'is_superuser']
+    list_display = ['id','first_name','last_name','email','device_type','provider_type','is_superuser' ]
+    fields = [ 'first_name','last_name','email', 'password', 'is_superuser','device_type','provider_type','device_id','provider_user_id']
     exclude = ('groups', 'created_at', 'is_staff', 'user_permissions', 'date_joined', 'last_login', 'is_active')
     search_fields = ('email',)
+    readonly_fields=('device_id','provider_user_id')
 
     def get_email(self, obj):
         return obj.email if obj.email else "Guest user"

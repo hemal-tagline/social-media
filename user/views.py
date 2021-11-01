@@ -58,3 +58,19 @@ class UserRetrieveUpdateDestroyview(generics.RetrieveUpdateDestroyAPIView):
 class CutomObtainPairView(TokenObtainPairView):
     """ Create API view for serializer class 'CustomTokenObtainPairSerializer' """
     serializer_class = CustomTokenObtainPairSerializer
+    
+class GuestUserView(generics.GenericAPIView):
+    serializer_class = GuestUserSerializer
+
+    def post(self, request, *args,  **kwargs):
+        serializer = GuestUserSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        get_user = User.objects.filter(
+            device_id=request.data['device_id'], provider_type='guest')
+        if get_user.exists():
+            return user_access_token(get_user.first(), self.get_serializer_context(), is_created=False)
+
+        user = serializer.save()
+        return user_access_token(user, self.get_serializer_context(), is_created=True)

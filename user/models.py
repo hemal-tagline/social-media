@@ -36,10 +36,26 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    DEVICE_TYPE = (
+        ('android', 'Android'),
+        ('ios', 'IOS'),
+    )
+    PROVIDER_TYPE = (
+        ('google', 'Google'),
+        ('facebook', 'Facebook'),
+        ('apple', 'Apple'),
+        ('github', 'GitHub'),
+        ('demo_app', 'Demo App'),
+        ('guest', 'Guest'),
+    )
     username = None
     first_name = models.CharField(max_length=255, blank=True)    
     last_name = models.CharField(max_length=255, blank=True)
     email = models.EmailField(max_length=255, unique=True, null=True)
+    device_id = models.CharField(max_length=255)
+    device_type = models.CharField(max_length=10, choices=DEVICE_TYPE)
+    provider_user_id = models.CharField(max_length=255, blank=True)
+    provider_type = models.CharField(max_length=20, choices=PROVIDER_TYPE, default='demo_app')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

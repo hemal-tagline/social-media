@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from rest_framework.permissions import IsAuthenticated
-from django.db import models
 from .models import User
-from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.core.validators import EmailValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import password_validation
+from rest_framework.response import Response
+from django.core.mail import send_mail
+from django.conf import settings
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -92,3 +92,52 @@ class SocialUserSerializer(serializers.ModelSerializer):
             },
             "password": {'write_only': True},
         }
+        
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(max_length=128, write_only=True, required=True)
+    new_password1 = serializers.CharField(max_length=128, write_only=True, required=True)
+    new_password2 = serializers.CharField(max_length=128, write_only=True, required=True)
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError(
+                'Your old password was entered incorrectly. Please enter it again.'
+            )
+        return value
+
+    def validate(self, data):
+        if data['new_password1'] != data['new_password2']:
+            raise serializers.ValidationError({'new_password2': _("The two password fields didn't match.")})
+        password_validation.validate_password(data['new_password1'], self.context['request'].user)
+        return data
+
+    def save(self, **kwargs):
+        password = self.validated_data['new_password1']
+        user = self.context['request'].user
+        user.set_password(password)
+        user.save()
+        return user
+
+class ForgetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=128, required=True)
+    
+    def validate(self, data):
+        try:
+            userObj = User.objects.get(email__iexact=data['email'])
+            password = User.objects.make_random_password()
+            userObj.set_password(password)
+            userObj.save()
+            
+            subject = F"Password Reset"
+            message = F"{userObj} Your Password is: {password}"
+
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[userObj.email]
+            )
+            return data
+        except User.DoesNotExist:
+            return Response({'error': "Provided email doesn't exist."}, status=404)

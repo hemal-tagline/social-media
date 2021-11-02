@@ -1,11 +1,9 @@
-from django.contrib.auth.hashers import make_password
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Q
-
 from .models import User
 from .serializer import *
 
@@ -94,3 +92,44 @@ class SocialUserView(generics.GenericAPIView):
 
         user = serializer.save()
         return user_access_token(user, self.get_serializer_context(), is_created=True)
+
+class ChangePasswordView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save() 
+  
+        return Response({'password-change': "Password change successfully"}, status=status.HTTP_200_OK)
+    
+class ForgotPasswordAPI(generics.CreateAPIView):
+    serializer_class = ForgetPasswordSerializer
+    def post(self, request, format=None):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+        '''If You are not used serializer '''
+        # try:
+        #     userObj = User.objects.get(email__iexact=request.data['email'])
+        #     password = User.objects.make_random_password()
+        #     userObj.set_password(password)
+        #     userObj.save()
+            
+        #     subject = F"Password Reset - Demp App"
+        #     message = F"{userObj} Your Temparary Password is: {password}"
+
+        #     send_mail(
+        #         subject=subject,
+        #         message=message,
+        #         from_email=settings.DEFAULT_FROM_EMAIL,
+        #         recipient_list=[userObj]
+        #     )
+        #     return Response({'status': True})
+        # except User.DoesNotExist:
+        #     return Response({'error': "Provided email doesn't exist."}, status=404)
+    

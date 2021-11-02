@@ -10,6 +10,8 @@ urlpatterns = [
     path('user-update/', UserRetrieveUpdateDestroyview.as_view(), name='user-update'),
     path('user-destroy/', UserRetrieveUpdateDestroyview.as_view(), name='user-destroy'),
     path('login-guest/', GuestUserView.as_view(),name="login-guest"),
-    path('login-social-media/',SocialUserView.as_view(), name='social-media-signin'),
+    path('login-social-media/',SocialUserView.as_view(), name='login-social-media'),
+    path('change-password/',ChangePasswordView.as_view(), name='change-password'),
+    path('forget-password/',ForgotPasswordAPI.as_view(), name='forget-password'),
     
 ]

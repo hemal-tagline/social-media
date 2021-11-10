@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from .models import User
+from import_export.admin import ExportMixin, ImportExportModelAdmin , ImportMixin
 
+# Only Export For used -> ExportMixin
+# Only Import For used -> ImportMixin
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
     list_display = ['id','first_name','last_name','email','device_type','provider_type','is_superuser' ]
     fields = [ 'first_name','last_name','email', 'password', 'is_superuser','device_type','provider_type','device_id','provider_user_id']
     exclude = ('groups', 'created_at', 'is_staff', 'user_permissions', 'date_joined', 'last_login', 'is_active')
@@ -25,3 +27,5 @@ class UserAdmin(admin.ModelAdmin):
         else:
             obj.set_password(obj.password)
         obj.save()
+        
+admin.site.register(User ,UserAdmin)

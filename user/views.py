@@ -34,8 +34,10 @@ class GetAllUserView(generics.ListAPIView):
         return TalentSearch
     
 class RegisterUserView(generics.CreateAPIView):
+    
+    serializer_class = UserSerializer
     def post(self, request, format=None):
-        serializer = RegisterUserSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
 
         if User.objects.filter(email__iexact=request.data['email']).exists():
             return Response({'error': {"email": ["Your email already register. please login with password."]}}, status=status.HTTP_400_BAD_REQUEST)
@@ -52,12 +54,12 @@ class UserRetrieveUpdateDestroyview(generics.RetrieveUpdateDestroyAPIView):
 
     def get(self, request, format=None):
         user = self.request.user
-        serializer = UserSerializer(user)
+        serializer = self.get_serializer(user)
         return Response(serializer.data)
 
     def put(self, request, format=None):
         user = self.request.user
-        serializer = UserSerializer(user, data=request.data)
+        serializer = self.get_serializer(user, data=request.data)
         if not serializer.is_valid():
             return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -77,7 +79,7 @@ class GuestUserView(generics.GenericAPIView):
     serializer_class = GuestUserSerializer
 
     def post(self, request, *args,  **kwargs):
-        serializer = GuestUserSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 

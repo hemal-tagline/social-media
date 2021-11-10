@@ -6,7 +6,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Q
 from .models import User
 from .serializer import *
-
+from rest_framework.throttling import UserRateThrottle
+import django_filters.rest_framework
+from rest_framework.pagination import PageNumberPagination
+from rest_framework import viewsets
 
 def user_access_token(user, context, is_created=False):
     refresh = RefreshToken.for_user(user)
@@ -19,6 +22,17 @@ def user_access_token(user, context, is_created=False):
 
     return Response(response)
 
+class TalentSearchpagination(PageNumberPagination):
+    page_size = 2
+
+class GetAllUserView(generics.ListAPIView):
+    pagination_class = TalentSearchpagination
+    serializer_class = AllUserSerializer
+
+    def get_queryset(self):
+        TalentSearch = User.objects.all()
+        return TalentSearch
+    
 class RegisterUserView(generics.CreateAPIView):
     def post(self, request, format=None):
         serializer = RegisterUserSerializer(data=request.data)

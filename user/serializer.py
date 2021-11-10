@@ -37,6 +37,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data['password'])
         return super(RegisterUserSerializer, self).create(validated_data)
 
+class AllUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = "__all__"
+        
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -13,5 +13,6 @@ urlpatterns = [
     path('login-social-media/',SocialUserView.as_view(), name='login-social-media'),
     path('change-password/',ChangePasswordView.as_view(), name='change-password'),
     path('forget-password/',ForgotPasswordAPI.as_view(), name='forget-password'),
+    path('get-all-user-view/',GetAllUserView.as_view(),  name='get-all-user-view'),
     
 ]

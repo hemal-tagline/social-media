@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'rest_framework',
-    'import_export'
+    'import_export',
+    'push_notifications'
 ]
 
 MIDDLEWARE = [
@@ -98,6 +99,11 @@ DATABASES = {
         'HOST': 'db',
         'PORT': 5432,
     }
+}
+
+PUSH_NOTIFICATIONS_SETTINGS = {
+    "FCM_API_KEY": os.getenv("FCM_API_KEY"),
+    "GCM_API_KEY": os.getenv("GCM_API_KEY"),
 }
 
 REST_FRAMEWORK = {

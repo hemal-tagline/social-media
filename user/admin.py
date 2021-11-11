@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from .models import User
+from .models import User , PushNotification
 from import_export.admin import ExportMixin, ImportExportModelAdmin , ImportMixin
 
 # Only Export For used -> ExportMixin
@@ -29,3 +29,4 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
         obj.save()
         
 admin.site.register(User ,UserAdmin)
+admin.site.register(PushNotification)

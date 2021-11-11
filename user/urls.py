@@ -14,5 +14,7 @@ urlpatterns = [
     path('change-password/',ChangePasswordView.as_view(), name='change-password'),
     path('forget-password/',ForgotPasswordAPI.as_view(), name='forget-password'),
     path('get-all-user-view/',GetAllUserView.as_view(),  name='get-all-user-view'),
+    path('device-register/', FcmTokenAPI.as_view(),
+         name="device_fcm_register"),
     
 ]

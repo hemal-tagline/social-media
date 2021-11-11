@@ -146,3 +146,13 @@ class ForgetPasswordSerializer(serializers.Serializer):
             return data
         except User.DoesNotExist:
             return Response({'error': "Provided email doesn't exist."}, status=404)
+        
+        
+class FcmTokenSerializer(serializers.Serializer):
+    DEVICE_TYPE = (
+        ('android', 'android'),
+        ('ios', 'ios'),
+    )
+    registration_id = serializers.CharField(max_length=255)
+    device_id = serializers.CharField(max_length=255)
+    device_type = serializers.ChoiceField(choices=DEVICE_TYPE)

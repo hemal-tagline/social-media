@@ -68,3 +68,20 @@ class User(AbstractUser):
         db_table = 'users'
 
     objects = UserManager()
+
+
+class PushNotification(models.Model):
+    title = models.CharField(
+        max_length=255, help_text="Add notification title here.")
+    message = models.TextField(
+        null=True, blank=True, help_text="Add notification message here.")
+    image = models.ImageField(
+        upload_to='notification-image', null=True, blank=True, help_text="Image view on recived notification.")
+
+    def __str__(self):
+        return f"Push Notification {self.title}"
+
+    class Meta:
+        verbose_name = "Send Push Notification"
+        verbose_name_plural = "Send Push Notifications"
+        db_table = 'push_notification'

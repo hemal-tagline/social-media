@@ -5,11 +5,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Q
 from .models import User
+from push_notifications.models import APNSDevice, GCMDevice, WNSDevice , WebPushDevice
 from .serializer import *
-from rest_framework.throttling import UserRateThrottle
-import django_filters.rest_framework
 from rest_framework.pagination import PageNumberPagination
-from rest_framework import viewsets
 
 def user_access_token(user, context, is_created=False):
     refresh = RefreshToken.for_user(user)
@@ -149,3 +147,31 @@ class ForgotPasswordAPI(generics.CreateAPIView):
         # except User.DoesNotExist:
         #     return Response({'error': "Provided email doesn't exist."}, status=404)
     
+class FcmTokenAPI(generics.CreateAPIView):
+    serializer_class = FcmTokenSerializer
+
+    def post(self, request, format=None):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'error': serializer.errors}, status=400)
+        fcm_data = serializer.data
+        user = self.request.user
+
+        defaults = {
+            'registration_id': fcm_data['registration_id']
+        }
+        if self.request.user.id:
+            defaults['user'] = self.request.user
+            print(defaults['user'])
+
+        try:
+            if fcm_data['device_type'] == "ios":
+                APNSDevice.objects.update_or_create(device_id=fcm_data['device_id'], defaults=defaults)
+            elif fcm_data['device_type'] == "android":
+                GCMDevice.objects.update_or_create(device_id=fcm_data['device_id'], cloud_message_type='FCM', defaults=defaults)
+            elif fcm_data['device_type'] == "windows":
+                WNSDevice.objects.update_or_create(device_id=fcm_data['device_id'], cloud_message_type='FCM', defaults=defaults)
+        except:
+            return Response({'error': {'device_id': ['device id is invalid']}}, status=400)
+
+        return Response(serializer.data)

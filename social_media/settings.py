@@ -43,7 +43,10 @@ INSTALLED_APPS = [
     'user',
     'rest_framework',
     'import_export',
-    'push_notifications'
+    'push_notifications',
+    'learnings',
+    'drf_yasg',
+    # 'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
 ]
 
 MIDDLEWARE = [
@@ -55,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS':'rest_framework.schemas.coreapi.AutoSchema' }
 
 ROOT_URLCONF = 'social_media.urls'
 

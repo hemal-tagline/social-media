@@ -26,9 +26,9 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
         if obj.pk:
             orig_obj = User.objects.get(pk=obj.pk)
             if obj.password != orig_obj.password:
-                obj.set_password(make_password(obj.password))
+                obj.set_password(obj.password)
         else:
-            obj.set_password(make_password(obj.password))
+            obj.set_password(obj.password)
         obj.save()
         
 class MapHistoryAdmin(admin.ModelAdmin):

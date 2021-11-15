@@ -33,7 +33,7 @@ class GetAllUserView(generics.ListAPIView):
     
 class RegisterUserView(generics.CreateAPIView):
     
-    serializer_class = UserSerializer
+    serializer_class = RegisterUserSerializer
     def post(self, request, format=None):
         serializer = self.get_serializer(data=request.data)
 

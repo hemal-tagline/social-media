@@ -1,0 +1,67 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+
+{% block extrahead %}
+{{'user_maphistory_add'}}
+    {% if request.resolver_match.url_name == 'user_maphistory_add' or request.resolver_match.url_name == 'user_maphistory_change' %}
+        <style type="text/css">
+            #map{
+                opacity:0;
+            }
+
+            .mapboxgl-ctrl-geocoder--input{
+                width: 400px !important;
+                color: #fff !important;
+                padding-left: 30px !important;
+            }   
+
+            .mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--pin-right > * {
+                right: -152px !important;
+            }
+            
+            .mapboxgl-ctrl-geocoder .suggestions {
+                width: 400px !important;
+            }
+        </style>
+        {% load mapbox_location_field_tags %}
+        {% location_field_includes %}
+        {% include_jquery %}
+    {% endif %}
+        
+
+    {{ block.super }}
+{% endblock %}
+
+
+
+{% block footer %}
+    {% if request.resolver_match.url_name == 'user_maphistory_add' or request.resolver_match.url_name == 'user_maphistory_change' %}
+        <script  type="text/javascript">
+            const searchbox = $(".mapboxgl-ctrl-geocoder--input")
+            $(".mapboxgl-ctrl-geocoder--input").css("background-color",'#000000');
+            function sleep(ms)
+            {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            $(document).ready(()=>{
+                $(document).on('click', '.mapboxgl-canvas', function() {
+                    let location = $('[name="location"]').val();
+                    let lat_long = location.split(',');
+                    $('[name="destination_latitude"]').val(lat_long[0]);
+                    $('[name="destination_longitude"]').val(lat_long[1]);
+                    SetAddress();
+                });
+            });
+
+            async function SetAddress() {
+                await sleep(400);
+                let address = $('.mapboxgl-ctrl-geocoder--input').val();
+                $('[name="address"]').val(address);
+            }
+        </script>
+    {% endif %}
+    
+    {{ block.super }}
+{% endblock %}

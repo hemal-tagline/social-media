@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'push_notifications',
     'drf_yasg',
     'learningplateform',
+    'mapbox_location_field'
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+MAPBOX_KEY = 'pk.eyJ1IjoiaGVtYWwtdGFnbGluZSIsImEiOiJja3cwNzd4N2c0cHVmMnFrbGVoaHBodnh0In0.pj9At0dRq20nBwHFmCHDaw'
+
 REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS':'rest_framework.schemas.coreapi.AutoSchema' }
 
 ROOT_URLCONF = 'social_media.urls'
@@ -65,7 +68,7 @@ ROOT_URLCONF = 'social_media.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

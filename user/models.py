@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from mapbox_location_field.models import LocationField
 
 class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None):
@@ -85,3 +86,11 @@ class PushNotification(models.Model):
         verbose_name = "Send Push Notification"
         verbose_name_plural = "Send Push Notifications"
         db_table = 'push_notification'
+
+class MapHistory(models.Model):
+    destination_latitude = models.DecimalField(max_digits=50, decimal_places=15)
+    destination_longitude = models.DecimalField(max_digits=50, decimal_places=15)
+    location = LocationField()
+    class Meta:
+        verbose_name = "Map History"
+        verbose_name_plural = "Map History"

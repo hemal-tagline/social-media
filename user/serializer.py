@@ -35,6 +35,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
+        print("validated_data : ",validated_data)
         return super(RegisterUserSerializer, self).create(validated_data)
 
 class AllUserSerializer(serializers.ModelSerializer):
@@ -120,7 +121,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     def save(self, **kwargs):
         password = self.validated_data['new_password1']
         user = self.context['request'].user
-        user.set_password(password)
+        user.set_password(make_password(password))
         user.save()
         return user
 

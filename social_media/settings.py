@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'import_export',
     'push_notifications',
     'drf_yasg',
-    # 'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
+    'learningplateform',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'social_media.wsgi.application'
-
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

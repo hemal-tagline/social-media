@@ -3,6 +3,8 @@
 
 
 {% block extrahead %}
+    {% if request.resolver_match.url_name == 'user_excelfilesupload_change' %}
+    {% endif %}
     {% if request.resolver_match.url_name == 'user_maphistory_add' or request.resolver_match.url_name == 'user_maphistory_change' %}
         <style type="text/css">
             #map{

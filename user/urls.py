@@ -18,5 +18,7 @@ urlpatterns = [
          name="device_fcm_register"),
     path('map-history-add/',MapHistoryView.as_view(),  name='map-history'),
     path('map-history-get/',MapHistoryView.as_view(),  name='map-history'),
+    path('excel-files-upload/',ExcelFilesUploadView.as_view(),  name='excel-files-upload'),
+    
     
 ]

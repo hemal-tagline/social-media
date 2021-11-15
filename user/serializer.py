@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User , MapHistory
+from .models import ExcelFilesUpload, User , MapHistory
 from django.contrib.auth.hashers import make_password
 from django.core.validators import EmailValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -172,3 +172,11 @@ class MapHistorySerializer(serializers.ModelSerializer):
         validated_data['location'] = f"({validated_data['destination_longitude']}, {validated_data['destination_latitude']})"
         map_history = MapHistory.objects.create(**validated_data)
         return map_history
+    
+class ExcelFilesUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExcelFilesUpload
+        fields = "__all__"
+    
+    # def create(self, validated_data):
+    #     print("validated_data : ",validated_data['Files'])

@@ -188,3 +188,15 @@ class MapHistoryView(views.APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework.parsers import FileUploadParser 
+class ExcelFilesUploadView(views.APIView):
+    parser_class = (FileUploadParser,)
+    def post(self,request, *args, **kwargs):
+        print(request.FILES)
+        serializer = ExcelFilesUploadSerializer(data=request.FILES)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(request.data,status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)

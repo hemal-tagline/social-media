@@ -5,8 +5,9 @@ from import_export.admin import ExportMixin, ImportExportModelAdmin , ImportMixi
 
 # Only Export For used -> ExportMixin
 # Only Import For used -> ImportMixin
-from .models import MapHistory  
-from mapbox_location_field.admin import MapAdmin  
+from .models import MapHistory, ExcelFilesUpload 
+from mapbox_location_field.admin import MapAdmin
+from django.contrib.auth.hashers import make_password
 
 class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
     list_display = ['id','first_name','last_name','email','device_type','provider_type','is_superuser' ]
@@ -25,14 +26,18 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
         if obj.pk:
             orig_obj = User.objects.get(pk=obj.pk)
             if obj.password != orig_obj.password:
-                obj.set_password(obj.password)
+                obj.set_password(make_password(obj.password))
         else:
-            obj.set_password(obj.password)
+            obj.set_password(make_password(obj.password))
         obj.save()
         
 class MapHistoryAdmin(admin.ModelAdmin):
     list_display = ["id","destination_latitude","destination_longitude"]
+    
+class ExcelFilesUploadAdmin(admin.ModelAdmin):
+    list_display = ["id","Files"]
         
 admin.site.register(User ,UserAdmin)
 admin.site.register(PushNotification)
-admin.site.register(MapHistory, MapHistoryAdmin)  
+admin.site.register(MapHistory, MapHistoryAdmin)
+admin.site.register(ExcelFilesUpload,ExcelFilesUploadAdmin)

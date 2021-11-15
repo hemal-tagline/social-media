@@ -94,3 +94,6 @@ class MapHistory(models.Model):
     class Meta:
         verbose_name = "Map History"
         verbose_name_plural = "Map History"
+        
+class ExcelFilesUpload(models.Model):
+    Files = models.FileField(upload_to="upload/Excel")

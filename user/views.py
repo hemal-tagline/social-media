@@ -1,10 +1,10 @@
-from rest_framework import generics, status
+from rest_framework import generics, status , views
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Q
-from .models import User
+from .models import MapHistory, User
 from push_notifications.models import APNSDevice, GCMDevice, WNSDevice , WebPushDevice
 from .serializer import *
 from rest_framework.pagination import PageNumberPagination
@@ -175,3 +175,16 @@ class FcmTokenAPI(generics.CreateAPIView):
             return Response({'error': {'device_id': ['device id is invalid']}}, status=400)
 
         return Response(serializer.data)
+class MapHistoryView(views.APIView):
+    def get(self, request, format=None):
+        queryset = MapHistory.objects.all()
+        serializer = MapHistorySerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request, *args, **kwargs):
+        serializer = MapHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

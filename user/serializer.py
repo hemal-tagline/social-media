@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User , MapHistory
 from django.contrib.auth.hashers import make_password
 from django.core.validators import EmailValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -157,3 +157,18 @@ class FcmTokenSerializer(serializers.Serializer):
     registration_id = serializers.CharField(max_length=255)
     device_id = serializers.CharField(max_length=255)
     device_type = serializers.ChoiceField(choices=DEVICE_TYPE)
+
+
+class MapHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapHistory
+        fields = "__all__"
+        extra_kwargs = {
+            "location" : {
+                'required':False
+            }
+        }
+    def create(self, validated_data):
+        validated_data['location'] = f"({validated_data['destination_longitude']}, {validated_data['destination_latitude']})"
+        map_history = MapHistory.objects.create(**validated_data)
+        return map_history

@@ -16,5 +16,7 @@ urlpatterns = [
     path('get-all-user-view/',GetAllUserView.as_view(),  name='get-all-user-view'),
     path('device-register/', FcmTokenAPI.as_view(),
          name="device_fcm_register"),
+    path('map-history-add/',MapHistoryView.as_view(),  name='map-history'),
+    path('map-history-get/',MapHistoryView.as_view(),  name='map-history'),
     
 ]

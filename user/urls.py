@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from django.urls import path, include
 from .views import *
-
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     
     path('signup/', RegisterUserView.as_view(), name='register'),
@@ -22,4 +23,4 @@ urlpatterns = [
     path('api_root/',api_root,  name='api_root'),
     
     
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

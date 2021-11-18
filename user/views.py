@@ -200,3 +200,13 @@ class ExcelFilesUploadView(views.APIView):
             return Response(request.data,status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('get-all-user-view', request=request, format=format),
+        'maphistory': reverse('map-history-get', request=request, format=format)
+    })

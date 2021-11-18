@@ -17,6 +17,7 @@ cryptography==35.0.0
 defusedxml==0.7.1
 diff-match-patch==20200713
 Django==3.2.8
+django-admin-black==0.0.1
 django-allauth==0.45.0
 django-celery-beat==2.2.1
 django-filter==21.1

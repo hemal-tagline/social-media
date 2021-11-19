@@ -16,7 +16,11 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
     exclude = ('groups', 'created_at', 'is_staff', 'user_permissions', 'date_joined', 'last_login', 'is_active')
     search_fields = ('email',)
     readonly_fields=('device_id','provider_user_id')
-    list_filter = ['device_type']
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['device_type']
+        else:
+            return []
     list_display_links = None
     actions = ['device_type']
     def get_email(self, obj):
@@ -60,6 +64,16 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
     def has_module_permission(self, request, obj=None):
         return True
     
+    def has_view_permission(self, request, obj=None):
+        if request.user.is_superuser == False:
+            return obj is None or Post.objects.filter(user=request.user.pk)
+    
+    def get_queryset(self, request):
+        if request.user.is_superuser == False:        
+            return User.objects.filter(pk=request.user.pk)
+        else:
+            return User.objects.all()
+    
     # def has_view_permission(self, request, obj=None):
     #     return False
     # admin.site.disable_action('delete_selected')
@@ -71,8 +85,47 @@ class ExcelFilesUploadAdmin(admin.ModelAdmin):
     list_display = ["id","Files"]
         
 class PostAdmin(admin.ModelAdmin):
-    list_filter = ['user']
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['user']
+        else:
+            return []
+
     list_display = ['id','name','description','user']
+
+    fieldsets = [
+        (None, { 'fields': ('name','description') } ),
+    ]
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'user', None) is None:
+            obj.user = request.user
+        obj.save()
+
+    def has_view_permission(self, request, obj=None):
+        if request.user.is_superuser == False:
+            return obj is None or Post.objects.filter(user=request.user.pk)
+        
+    def has_delete_permission(self, request, obj=None):
+        if request.user.is_superuser == False:
+            return obj is None or Post.objects.filter(user=request.user.pk)
+        else:
+            return True
+        
+    def has_add_permission(self, request):
+        return True
+
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    def has_module_permission(self, request, obj=None):
+        return True
+    
+    def get_queryset(self, request):
+        if request.user.is_superuser == False:        
+            return Post.objects.filter(user=request.user.pk)
+        else:
+            return Post.objects.all()
 
 admin.site.register(User ,UserAdmin)
 admin.site.register(PushNotification)

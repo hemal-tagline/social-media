@@ -16,6 +16,7 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
     exclude = ('groups', 'created_at', 'is_staff', 'user_permissions', 'date_joined', 'last_login', 'is_active')
     search_fields = ('email',)
     readonly_fields=('device_id','provider_user_id')
+    list_filter = ['device_type']
     list_display_links = None
     actions = ['device_type']
     def get_email(self, obj):
@@ -70,6 +71,7 @@ class ExcelFilesUploadAdmin(admin.ModelAdmin):
     list_display = ["id","Files"]
         
 class PostAdmin(admin.ModelAdmin):
+    list_filter = ['user']
     list_display = ['id','name','description','user']
 
 admin.site.register(User ,UserAdmin)

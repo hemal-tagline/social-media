@@ -28,13 +28,18 @@ class UserManager(BaseUserManager):
         )
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        user.is_staff = False
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
     def get_by_natural_key(self, username):
         return self.get(**{self.model.USERNAME_FIELD + '__iexact': username})
 
+    def has_module_perms(self, app_label):
+        return True 
+    
+    def has_perm(self, perm, ob=None):
+        return True
 
 class User(AbstractUser):
     DEVICE_TYPE = (
@@ -97,3 +102,9 @@ class MapHistory(models.Model):
         
 class ExcelFilesUpload(models.Model):
     Files = models.FileField(upload_to="upload/Excel")
+    
+    
+class Post(models.Model):
+    name = models.CharField(max_length=500)
+    description = models.CharField(max_length=500)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)

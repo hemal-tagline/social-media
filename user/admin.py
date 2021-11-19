@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from .models import User , PushNotification
+from .models import Post, User , PushNotification
 from import_export.admin import ExportMixin, ImportExportModelAdmin , ImportMixin
 from django.contrib import messages
 from django.utils.translation import ngettext
@@ -69,7 +69,11 @@ class MapHistoryAdmin(admin.ModelAdmin):
 class ExcelFilesUploadAdmin(admin.ModelAdmin):
     list_display = ["id","Files"]
         
+class PostAdmin(admin.ModelAdmin):
+    list_display = ['id','name','description','user']
+
 admin.site.register(User ,UserAdmin)
 admin.site.register(PushNotification)
 admin.site.register(MapHistory, MapHistoryAdmin)
 admin.site.register(ExcelFilesUpload,ExcelFilesUploadAdmin)
+admin.site.register(Post,PostAdmin)

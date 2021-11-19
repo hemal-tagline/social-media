@@ -210,3 +210,18 @@ def api_root(request, format=None):
         'users': reverse('get-all-user-view', request=request, format=format),
         'maphistory': reverse('map-history-get', request=request, format=format)
     })
+    
+class PostViewDetails(views.APIView):
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request, format=None):
+        snippets = Post.objects.all()
+        serializer = PostSerializer(snippets, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ExcelFilesUpload, User , MapHistory
+from .models import ExcelFilesUpload, Post, User , MapHistory
 from django.contrib.auth.hashers import make_password
 from django.core.validators import EmailValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -180,3 +180,8 @@ class ExcelFilesUploadSerializer(serializers.ModelSerializer):
     
     # def create(self, validated_data):
     #     print("validated_data : ",validated_data['Files'])
+    
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = "__all__"

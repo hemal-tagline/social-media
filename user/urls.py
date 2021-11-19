@@ -21,6 +21,7 @@ urlpatterns = [
     path('map-history-get/',MapHistoryView.as_view(),  name='map-history-get'),
     path('excel-files-upload/',ExcelFilesUploadView.as_view(),  name='excel-files-upload'),
     path('api_root/',api_root,  name='api_root'),
+    path('post-view/',PostViewDetails.as_view(),  name='post-view'),
     
     
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

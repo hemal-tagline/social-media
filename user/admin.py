@@ -67,6 +67,8 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
     def has_view_permission(self, request, obj=None):
         if request.user.is_superuser == False:
             return obj is None or Post.objects.filter(user=request.user.pk)
+        else:
+            return obj is None or Post.objects.all()
     
     def get_queryset(self, request):
         if request.user.is_superuser == False:        

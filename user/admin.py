@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from .models import User , PushNotification
 from import_export.admin import ExportMixin, ImportExportModelAdmin , ImportMixin
-
+from django.contrib import messages
+from django.utils.translation import ngettext
 # Only Export For used -> ExportMixin
 # Only Import For used -> ImportMixin
 from .models import MapHistory, ExcelFilesUpload 
@@ -15,7 +16,8 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
     exclude = ('groups', 'created_at', 'is_staff', 'user_permissions', 'date_joined', 'last_login', 'is_active')
     search_fields = ('email',)
     readonly_fields=('device_id','provider_user_id')
-
+    list_display_links = None
+    actions = ['device_type']
     def get_email(self, obj):
         return obj.email if obj.email else "Guest user"
     get_email.short_description = "Email"
@@ -30,7 +32,37 @@ class UserAdmin(ImportExportModelAdmin , admin.ModelAdmin):
         else:
             obj.set_password(obj.password)
         obj.save()
+
+    @admin.action(description='Mark selected device_type as Default Android')
+    def device_type(self, request, queryset):
+        updated = queryset.update(device_type='android')
+        self.message_user(request, ngettext(
+            '%d device type was successfully marked as Android.',
+            '%d device type were successfully marked as Android.',
+            updated,
+        ) % updated, messages.SUCCESS)
         
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    ''' User Module
+        If True is show on admin panel and else is don't show
+        If You Have Don't have in Admin Panel And any time access only url Link
+        http://127.0.0.1:8000/admin/user/user/
+    '''
+    def has_module_permission(self, request, obj=None):
+        return True
+    
+    # def has_view_permission(self, request, obj=None):
+    #     return False
+    # admin.site.disable_action('delete_selected')
+    
 class MapHistoryAdmin(admin.ModelAdmin):
     list_display = ["id","destination_latitude","destination_longitude"]
     

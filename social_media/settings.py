@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'push_notifications',
     'drf_yasg',
     'learningplateform',
-    'mapbox_location_field'
+    'mapbox_location_field',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [
@@ -80,6 +81,14 @@ TEMPLATES = [
         },
     },
 ]
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        # 'toolbar': 'full',
+        'height': 150,
+        'width': 1000,
+    },
+}
 
 WSGI_APPLICATION = 'social_media.wsgi.application'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -199,5 +208,6 @@ STATICFILES_DIRS = (
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
+CKEDITOR_UPLOAD_PATH = "uploads/"
 # STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+CKEDITOR_FILENAME_GENERATOR = 'utils.get_filename'

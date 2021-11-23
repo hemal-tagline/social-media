@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from mapbox_location_field.models import LocationField
+from ckeditor.fields import RichTextField
 
 class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None):
@@ -106,5 +107,5 @@ class ExcelFilesUpload(models.Model):
     
 class Post(models.Model):
     name = models.CharField(max_length=500)
-    description = models.CharField(max_length=500)
+    description = RichTextField()
     user = models.ForeignKey(User,on_delete=models.CASCADE)
